@@ -59,6 +59,50 @@ class_weight : dict or 'balanced', default=None
 decision_function_shape : {'ovo', 'ovr'}, default='ovr'（使用一对一策略还是一对多策略。其中一对一策略常用在在多分类策略上。）
     Whether to return a one-vs-rest ('ovr') decision function of shape  (n_samples, n_classes) as all other classifiers, or the original one-vs-one ('ovo') decision function of libsvm which has shape (n_samples, n_classes * (n_classes - 1) / 2). However, one-vs-one ('ovo') is always used as multi-class strategy. The parameter is ignored for binary classification.
 
+四、返回决策函数
+classifier.decision_function(train_data) 返回（训练集）到分类超平面的距离
+若采用一对多的策略，返回n个采样点，n中类别。若采用一对一策略返回决策函数的形式是n个采样点，（n种类别）*（n种类别-1）/2.
+五、绘制图形
+x1, x2 = np.mgrid[x1_min:x1_max:200j, x2_min:x2_max:200j]  # 生成网络采样点
+grid_test = np.stack((x1.flat, x2.flat), axis=1)  # 测试点
+【函数说明】：第一个函数是生成两个二维数组，第二个函数将两个二维数组堆叠成一个。这样最终的效果就是就遍历了所设 所有可能的取值。下面的语句可以很好说明这个问题。
+import numpy as np
+A,B = np.mgrid[0:5,0:5]
+print(A)
+print(np.shape(A))
+print(B)
+print(np.shape(B))
+grid_test = np.stack((A.flat,B.flat), axis=1)
+print(grid_test)
+print(np.shape(grid_test))
+运行以上程序得到的输出是：
+[[0 0 0 0 0][1 1 1 1 1][2 2 2 2 2][3 3 3 3 3][4 4 4 4 4]](5, 5)
+[[0 1 2 3 4][0 1 2 3 4][0 1 2 3 4]0 1 2 3 4][0 1 2 3 4]](5, 5)
+[[0 0][0 1][0 2][0 3][0 4][1 0][1 1][1 2][1 3][1 4][2 0][2 1][2 2][2 3][2 4][3 0][3 1][3 2][3 3] [3 4] [4 0] [4 1] [4 2] [4 3] [4 4]](25, 2)
+这里要注意的是第二个函数的不同axis取值，对应不同的堆叠组合方式。
+plt.scatter(test_data[:, 0], test_data[:, 1], c=test_label[:, 0], s=30, edgecolors='k', zorder=2 ,cmap=cm_dark)  # 圈中测试集样本点
+【函数说明】
+def scatter(
+        x, y, s=None, c=None, marker=None, cmap=None, norm=None,
+        vmin=None, vmax=None, alpha=None, linewidths=None, verts=None,
+        edgecolors=None, *, plotnonfinite=False, data=None, **kwargs):
+    __ret = gca().scatter(
+        x, y, s=s, c=c, marker=marker, cmap=cmap, norm=norm,
+        vmin=vmin, vmax=vmax, alpha=alpha, linewidths=linewidths,
+        verts=verts, edgecolors=edgecolors,
+        plotnonfinite=plotnonfinite, **({"data": data} if data is not
+        None else {}), **kwargs)
+    sci(__ret)
+    return __ret
+此函数用来绘制散点图。参数解释：
+x, y分别指定X，Y轴数据
+s指定散点的大小
+c指定散点的颜色
+alpha指定散点的透明度
+linewidths指定散点边框线的宽度
+edgecolors指定散点边框的颜色
+marker指定散点的图形样式
+cmap指定点点的颜色映射，会使用不同的颜色来区分散点的值（y种的三种类标记分别对应‘g’,‘r’,‘b’）
 
 
 
